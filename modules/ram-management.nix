@@ -14,7 +14,7 @@ in
   # Apply the configuration if enabled
   config = mkIf cfg.enable {
     
-    # 1. Disable standard systemd-generated swap devices
+    # Disable standard systemd-generated swap devices
     swapDevices = mkForce [ ];
 
     boot.kernelParams = [
@@ -23,7 +23,7 @@ in
       "transparent_hugepage=madvise" 
     ];
 
-    # 2. ZRAM configuration with dedicated SSD backing
+    # ZRAM configuration with dedicated SSD backing
     zramSwap = {
       enable = true;
       algorithm = "zstd";
@@ -31,12 +31,12 @@ in
       writebackDevice = "/dev/disk/by-partuuid/4a45f1ab-a8d0-4236-b32d-4bba4e4f1f93";
     };
 
-    # 3. Explicitly force-enable all MGLRU components safely via tmpfiles
+    # Explicitly force-enable all MGLRU components safely via tmpfiles
     systemd.tmpfiles.rules = [
       "w /sys/kernel/mm/lru_gen/enabled - - - - y"
     ];
 
-    # 4. Ultimate Fail-Safe Maintenance Script
+    # Fail-Safe Maintenance Script
     systemd.services.zram-flush = {
       description = "ZRAM maintenance: flush cold pages back to SSD partition";
       requires = [ "dev-zram0.device" ];
@@ -47,7 +47,7 @@ in
       
       script = ''
         zr=/sys/block/zram0
-        age=1800
+        age=1800 # 30 mins
 
         # Safety check for missing backing device attachment
         if [ "$(cat $zr/backing_dev)" = "none" ]; then
@@ -77,7 +77,7 @@ in
       '';
     };
 
-    # 5. Monotonic Maintenance Timer
+    # Monotonic Maintenance Timer
     systemd.timers.zram-flush = {
       description = "Hourly ZRAM maintenance and writeback loop";
       wantedBy = [ "timers.target" ];
@@ -88,14 +88,14 @@ in
       };
     };
 
-    # 6. Safe Systemd OOMD Policy
+    # Safe Systemd OOMD Policy
     systemd.oomd = {
       enable = true;
       enableRootSlice = false;       
       enableUserSlices = true;       
     };
 
-    # 7. Optimized VM Virtual Memory Adjustments
+    # Optimized VM Virtual Memory Adjustments
     boot.kernel.sysctl = {
       "vm.swappiness" = 111;         
       "vm.watermark_boost_factor" = 0; 
@@ -103,7 +103,7 @@ in
       "vm.page-cluster" = 0;         
     };
 
-    # 8. File System Maintenance
+    # File System Maintenance
     services.fstrim.enable = true;   
   };
 }

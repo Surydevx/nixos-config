@@ -383,3 +383,4 @@ switch-events {
     lid-close { spawn "noctalia" "msg" "session" "lock-and-suspend"; }
 }
 
+include "noctalia.kdl" # this line is added by noctalia.

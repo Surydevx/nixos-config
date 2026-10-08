@@ -19,7 +19,7 @@
             AutoConnect = true;
           };
           General = {
-            AddressRandomization = "network"; # Randomize MAC address per network for privacy
+            AddressRandomization = "network"; # Randomize MAC address per network
           };
       };
   };
@@ -33,7 +33,7 @@
   # Open ports in the firewall.
   networking.firewall = {
       enable = true;
-      rejectPackets = false; # Drop packets silently
+      rejectPackets = false; # Drop packets silently w/o rejecting
       trustedInterfaces = [ "tailscale0" ];
       allowedUDPPorts = [ 41641 ];
       allowedTCPPorts = [];

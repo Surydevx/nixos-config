@@ -1,5 +1,21 @@
 { pkgs, lib, ... }:
 
+#--------------------------------------------------------------------
+#
+# THIS MODULE IS NOT INCLUDED IN THE CONFIGURATION.NIX !!
+#
+# THIS MODULE IS NOT TESTED, NIETHER IT IS RECOMMENDED TO DO SO FOR THE PRESENT ITERATION.
+# REASONS: The following code is heavily ai generated and have been not verified yet,
+# moreover the parameters aren't crossed check much from original kernel archives.
+# If you have the compute and you are willing to do some tinkering,
+# sure you can compile this custom kernel by yourself.
+#
+# NO COMPUTE? : Maybe you can compile your own kernels using github actions or whatever alternatives you have.
+# Warning: The above Method is not tested by me, but a mere possibility.
+#
+# Hardware Configuration: I have CPU: Intel(R) Core(TM) i5-8265U (8) @ 3.90 GHz and GPU: Intel UHD Graphics 620 @ 1.10 GHz [Integrated]
+#
+#--------------------------------------------------------------------
 {
   # ------------------------------------------------------------------
   # Zen kernel base

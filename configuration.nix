@@ -35,7 +35,8 @@
   };
 
   # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # boot.kernelPackages = pkgs.linuxPackages_latest;
+  # commenting out the above line
 
   #################
   # custom modules#
@@ -224,7 +225,7 @@
 	enable = true;
 	clean.enable = true;
 	clean.extraArgs = "--keep 5 --keep-since 7d";
-	flake = "/home/surya/nixos-config"; # FIXED: Changed from /etc/nixos to point to your actual Git directory
+	flake = "/home/surya/nixos-config"; # Changed from /etc/nixos to point to your actual Git directory
   };
 
   #------------------- enabling docker-----------------------

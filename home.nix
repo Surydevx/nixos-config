@@ -26,7 +26,7 @@ in
   xdg.userDirs = {
     enable = true;
     createDirectories = true;
-    setSessionVariables = true; # Silences the 26.05 deprecation warning log
+    setSessionVariables = true;
   };
 
   # ===========================================================
@@ -36,9 +36,17 @@ in
     enable = true;
     lfs.enable = true;
 
-      includes = [
-        { path = "~/.gitconfig.local"; }
-    ];
+      settings = {
+      init = {
+        defaultBranch = "main";
+      };
+      include = {
+        path = "${config.home.homeDirectory}/.gitconfig.local";
+      };
+    };
+  };
+
+
 
   };
 

@@ -133,7 +133,7 @@ git config --file ~/.gitconfig.local user.email "your.email@example.com"
 gh auth login
 ```
 
-> Alternatively you can just go and copy your existing .gitconfig from previous git setup and just copy paste it in .gitconfig.local and please refrain yourself doing same for gh.
+> Alternatively you can just go and copy your existing .gitconfig from previous git setup and just copy paste it in ~/.gitconfig.local and please refrain yourself doing same for gh.
 
 ## Committing
 ```Bash
@@ -142,8 +142,8 @@ git commit -m "<Insert Your Commit Message>"
 
 ## Download and setup wallpapers.
 
->> By default the setup for wallpapers is straightforward
->> whole `~/Pictures` directory is default, so you can drop either standalone png files or folders both works.
+> By default the setup for wallpapers is straightforward
+> whole `~/Pictures` directory is default, so you can drop either standalone png files or folders both works.
 
 ```bash
 cd Pictures
@@ -151,4 +151,7 @@ git clone https://github.com/dharmx/walls
 ```
 💡 Usage & Suggestions
 Learn the Keybinds: Press Super + Shift + / to bring up the hotkey overlay and learn how to navigate this new tiling environment.
+
 Make it Yours: Go ahead and configure your system visually using the Noctalia GUI. It will write directly to your Niri config, which remains unlocked for your edits.
+
+Keep your system updated: After initial build command, the nix helper gets enabled and can be used to handle updates and stuff `nh os switch`

@@ -57,16 +57,16 @@ This configuration is mine, and made for me.
 This laptop is not dual-booting. The setup relies on the **Btrfs** filesystem (though the same logic can be applied to ext4). The system uses default partitioning done by the NixOS graphical installer, which includes an 8 GB swap partition. 
 
 ### 1. Tiered Custom Memory Architecture (zram + Physical Swap)
-Tis system uses a tiered approach to manage runtime memory:
+This system uses a tiered approach to manage runtime memory:
 
 * **Tier 1: Physical RAM (8GB):** Used for active, foreground processes.
 * **Tier 2: zram (Compressed RAM):** The system creates a compressed block device inside the physical RAM. Inactive memory pages are compressed and stored here. This effectively expands usable memory capacity to ~12-16GB at the cost of minimal CPU cycles, completely avoiding the latency of disk I/O.
-* **Tier 3: Physical Swap (8GB on SSD):** Acts as a fallback. It is only touched if the zram device fills up, ensuring the system deosn't crashes under heavy load.
+* **Tier 3: Physical Swap (8GB on SSD):** Acts as a fallback. It is only touched if the zram device fills up, ensuring the system doesn't crashes under heavy load.
 
 > *Note: If you are porting this to a machine with a very weak CPU, you may want to reduce the zram allocation percentage or disable it entirely, as compression requires CPU overhead.*
 
 ### 2. Custom Power Management Modules
-Achieving **0.5% - 0.8% battery drain per hour** (Testing conditions are explained below), This sytem achieves more than the default `powersave` governor of Power-PRofiles-Daemon. This system uses three tools without conflicting with each other:
+Achieving **0.5% - 0.8% battery drain per hour** (Testing conditions are explained below), This sytem achieves more than the default `powersave` governor of power-profiles-daemon. This system uses three tools without conflicting with each other:
 
 * **TLP:** Handles the static baseline. It manages PCIe ASPM, USB autosuspend, Wi-Fi power states, and disk spindown.
 * **auto-cpufreq:** Handles active load scaling. It acts as a daemon that monitors CPU load in real-time and dynamically switches between power profiles and frequency scaling, offering much better battery life than the default kernel governors.
@@ -129,20 +129,20 @@ Set of instructions you have to do before you can enjoy your system.
 git config --file ~/.gitconfig.local user.name "Your Name"
 git config --file ~/.gitconfig.local user.email "your.email@example.com"
 
-## conifguring Github CLI
+## configuring Github CLI
 gh auth login
 ```
 
 > Alternatively you can just go and copy your existing .gitconfig from previous git setup and just copy paste it in .gitconfig.local and please refrain yourself doing same for gh.
 
-## Commiting
+## Committing
 ```Bash
 git commit -m "<Insert Your Commit Message>"
 ```
 
 ## Download and setup wallpapers.
 
->> By defualt the setup for wallpapers is straightforward
+>> By default the setup for wallpapers is straightforward
 >> whole `~/Pictures` directory is default, so you can drop either standalone png files or folders both works.
 
 ```bash

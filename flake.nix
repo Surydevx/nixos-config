@@ -1,13 +1,13 @@
 {
  	description = "Setup with niri + noctalia";
 	inputs = {
-		nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+		nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 		noctalia = {
 		 	url = "github:noctalia-dev/noctalia";
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
 		home-manager = {
-			url = "github:nix-community/home-manager/release-26.05";
+			url = "github:nix-community/home-manager";
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
 
@@ -25,8 +25,8 @@
 				./hardware-configuration.nix
 				./configuration.nix
 				inputs.noctalia.nixosModules.default
-				#nixos-fprint.nixosModules.open-fprintd
-        	    #nixos-fprint.nixosModules.python-validity
+				nixos-fprint.nixosModules.open-fprintd
+        	    nixos-fprint.nixosModules.python-validity
 				home-manager.nixosModules.home-manager
 				{
 					home-manager.useGlobalPkgs = true;

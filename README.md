@@ -56,14 +56,14 @@ This configuration is mine, and made for me.
 
 This laptop is not dual-booting. The setup relies on the **Btrfs** filesystem (though the same logic can be applied to ext4). The system uses default partitioning done by the NixOS graphical installer, which includes an 8 GB swap partition. 
 
-### 1. Tiered Custom Memory Architecture (zram + Physical Swap)
-This system uses a tiered approach to manage runtime memory:
+### 1. Tiered Custom Memory Architecture (ZRAM + Writeback)
+This system uses a highly optimized, tiered approach to manage runtime memory, completely bypassing traditional slow disk swapping:
 
-* **Tier 1: Physical RAM (8GB):** Used for active, foreground processes.
-* **Tier 2: zram (Compressed RAM):** The system creates a compressed block device inside the physical RAM. Inactive memory pages are compressed and stored here. This effectively expands usable memory capacity to ~12-16GB at the cost of minimal CPU cycles, completely avoiding the latency of disk I/O.
-* **Tier 3: Physical Swap (8GB on SSD):** Acts as a fallback. It is only touched if the zram device fills up, ensuring the system doesn't crashes under heavy load.
+* **Tier 1: Physical RAM (8GB):** Used for active, foreground processes and hot memory pages.
+* **Tier 2: ZRAM (Compressed RAM):** The system creates a compressed block device inside the physical RAM (using `zstd`). Inactive memory pages are compressed and stored here. This effectively expands usable memory capacity to at the cost of minimal CPU cycles, avoiding the heavy latency of disk I/O throughput.
+* **Tier 3: ZRAM Writeback (SSD Partition):** Instead of using the 8GB partition as a swap partition, the system uses it exclusively as a *writeback device* for ZRAM. When ZRAM gets full, the kernel evicts the inactive compressed pages to this SSD partition. This keeps the active ZRAM space free for hot pages while preventing OOM (Out of Memory) crashes, without the latency penalty of swapping uncompressed pages to disk.
 
-> *Note: If you are porting this to a machine with a very weak CPU, you may want to reduce the zram allocation percentage or disable it entirely, as compression requires CPU overhead.*
+> *Note: If you are porting this to a machine with a very weak CPU, you may want to reduce the ZRAM allocation percentage or disable it entirely, as ZSTD compression requires CPU overhead.*
 
 ### 2. Custom Power Management Modules
 Achieving **0.5% - 0.8% battery drain per hour** (Testing conditions are explained below), This sytem achieves more than the default `powersave` governor of power-profiles-daemon. This system uses three tools without conflicting with each other:
@@ -115,14 +115,40 @@ sudo cp /etc/nixos/hardware-configuration.nix ~/nixos-config/hardware-configurat
 # 6. Backup the default installer configuration files
 sudo mv /etc/nixos /etc/nixos.bak
 
-# 7. Add the newly copied hardware-configuration.nix to git tracking
+# 7. Prepare the swap partition to be a ZRAM writeback device
+lsblk -f 
+# Find the partition with TYPE="swap". Note its name (e.g., sda3 or nvme0n1p5).
+# WARNING: Be extremely careful. Wiping the wrong partition will destroy your data!
+
+sudo wipefs -a /dev/<your-swap-partition> # e.g., /dev/sda3 or /dev/nvme0n1p5
+
+# Ensure the disk uses GPT (PTTYPE should be 'gpt')
+lsblk -o NAME,SIZE,TYPE,PTTYPE,MOUNTPOINT 
+
+# Enter a temporary shell with gptfdisk
+nix-shell -p gptfdisk
+
+# Change the partition name to 'zram-writeback' and type to Linux filesystem (8300)
+# IMPORTANT: Replace '3' with your actual partition number, and '/dev/sda' with your actual disk!
+sudo sgdisk --change-name=3:zram-writeback /dev/sda
+sudo sgdisk --typecode=3:8300 /dev/sda
+
+# Reload device info
+sudo udevadm control --reload
+sudo udevadm trigger
+
+# Verify the label was created (you should see zram-writeback pointing to your partition)
+ls -l /dev/disk/by-partlabel
+
+# 8. Add the newly copied hardware-configuration.nix to git tracking
 git add hardware-configuration.nix
 
-# 8. Build NixOS
+# 9. Build NixOS
 sudo nixos-rebuild switch --flake .#nixos
 ```
 
-# 9. Post building
+# Post building
+
 Set of instructions you have to do before you can enjoy your system.
 ```Bash
 ## Configuring git
@@ -133,7 +159,7 @@ git config --file ~/.gitconfig.local user.email "your.email@example.com"
 gh auth login
 ```
 
-> Alternatively you can just go and copy your existing .gitconfig from previous git setup and just copy paste it in ~/.gitconfig.local and please refrain yourself doing same for gh.
+> Alternatively you can just go and copy your existing .gitconfig.local from previous git setup and just copy paste it in ~/.gitconfig.local and please refrain yourself doing same for gh.
 
 ## Committing
 ```Bash

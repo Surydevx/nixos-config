@@ -17,6 +17,13 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  boot.kernelParams = [ 
+      # Unlocks full low-power media pipelines safely on Intel Gen9/Gen9.5 (8th Gen) 
+      # by enabling HuC load without triggering unstable GuC submission.
+      "i915.enable_guc=2" 
+  ];
+
+
   # enable hardware graphics
   hardware.graphics = {
     	enable = true;
@@ -35,8 +42,7 @@
   };
 
   # Use latest kernel.
-  # boot.kernelPackages = pkgs.linuxPackages_latest;
-  # commenting out the above line
+  boot.kernelPackages = pkgs.linuxPackages_latest; # grabs the latest kernel latest from the oven
 
   #################
   # custom modules#
@@ -130,7 +136,7 @@
     	isNormalUser = true;
     	description = "Suryansh Sharma";
     	shell = pkgs.zsh;
-    	extraGroups = [ "networkmanager" "wheel" "render" "video" "docker" "input" ];
+    	extraGroups = [ "networkmanager" "wheel" "render" "video" "input" ];
     	packages = with pkgs; [];
   };
 
@@ -138,16 +144,15 @@
   nixpkgs.config.allowUnfree = true;
 
   # allow insecure packages
-  nixpkgs.config.permittedInsecurePackages = [
-  	"openssl-1.1.1w" # for sublime text
-  ];
+  nixpkgs.config.permittedInsecurePackages = []; # empty
 
   # enable the synaptics driver for fingerprint
+  services.fprintd.enable = true;
   # services.open-fprintd.enable = true;
   # services.python-validity.enable = true;
   # allow fingerprint authentication
-  #security.pam.services.sudo.fprintAuth = true;
-  #security.pam.services.login.fprintAuth = true;
+  security.pam.services.sudo.fprintAuth = true;
+  security.pam.services.login.fprintAuth = true;
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
@@ -165,9 +170,7 @@
     git
     nautilus
     devenv
-    direnv
     vscode
-    sublime4
     eza
     gnome-software
     papirus-icon-theme
@@ -188,6 +191,7 @@
     lazygit
     gh
     zsh-completions
+    playerctl
   ];
   
   # Enabling native direnv integration
@@ -225,7 +229,7 @@
 	enable = true;
 	clean.enable = true;
 	clean.extraArgs = "--keep 5 --keep-since 7d";
-	flake = "/home/surya/nixos-config"; # Changed from /etc/nixos to point to your actual Git directory
+	flake = "/home/surya/nixos-config"; # Changed from /etc/nixos to point to actual Git directory
   };
 
   #------------------- enabling docker-----------------------
@@ -237,7 +241,14 @@
   services.gnome.gnome-keyring.enable = true;
   # enabling flatpak
   services.flatpak.enable = true;
-  
+  # Enabling garbage collector
+  nix.gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 30d";
+  };
+
+
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
   # accidentally delete configuration.nix.

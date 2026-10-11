@@ -42,7 +42,7 @@
   };
 
   # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest; # grabs the latest kernel latest from the oven
+  boot.kernelPackages = pkgs.linuxPackages_zen; # grabs the latest kernel latest from the oven
 
   #################
   # custom modules#
@@ -142,6 +142,10 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  
+  # enable all of the firmware
+  hardware.enableAllFirmware = true; 
+
 
   # allow insecure packages
   nixpkgs.config.permittedInsecurePackages = []; # empty
@@ -241,13 +245,6 @@
   services.gnome.gnome-keyring.enable = true;
   # enabling flatpak
   services.flatpak.enable = true;
-  # Enabling garbage collector
-  nix.gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 30d";
-  };
-
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you

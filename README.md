@@ -120,6 +120,7 @@ lsblk -f
 # Find the partition with TYPE="swap". Note its name (e.g., sda3 or nvme0n1p5).
 # WARNING: Be extremely careful. Wiping the wrong partition will destroy your data!
 
+sudo swapoff /dev/<your-swap-partition> # e.g., /dev/sda3 or /dev/nvme0n1p5
 sudo wipefs -a /dev/<your-swap-partition> # e.g., /dev/sda3 or /dev/nvme0n1p5
 
 # Ensure the disk uses GPT (PTTYPE should be 'gpt')

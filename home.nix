@@ -24,7 +24,7 @@ in
   };
 
   xdg.userDirs = {
-    enable = true;
+    enable = false;
     createDirectories = true;
     setSessionVariables = true;
   };

@@ -74,7 +74,16 @@
   };
 
   # Dynamic Linker for unpatched binaries (VS Code extensions, Python wheels)
-  programs.nix-ld.enable = true;
+  programs.nix-ld = {
+  enable = true;
+  libraries = with pkgs; [
+    stdenv.cc.cc.lib
+    zlib
+    openssl
+    libffi
+  ];
+};
+
 
   #-------------- Mandatory stuff for noctalia----------------------
   security.polkit.enable = true;
@@ -196,6 +205,7 @@
     gh
     zsh-completions
     playerctl
+    uv
   ];
   
   # Enabling native direnv integration
@@ -245,6 +255,13 @@
   services.gnome.gnome-keyring.enable = true;
   # enabling flatpak
   services.flatpak.enable = true;
+
+  # ---enabling kde-connect----#
+  programs.kdeconnect.enable = true;
+
+  # configuring uv to make user level binaries available on path 
+  environment.localBinInPath = true; 
+
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you

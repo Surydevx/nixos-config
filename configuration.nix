@@ -206,6 +206,7 @@
     zsh-completions
     playerctl
     uv
+    zathura
   ];
   
   # Enabling native direnv integration

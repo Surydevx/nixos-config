@@ -75,15 +75,14 @@
 
   # Dynamic Linker for unpatched binaries (VS Code extensions, Python wheels)
   programs.nix-ld = {
-  enable = true;
-  libraries = with pkgs; [
-    stdenv.cc.cc.lib
-    zlib
-    openssl
-    libffi
-  ];
-};
+    enable = true;
+    # Creates a custom virtual environment bridging steam-run's entire library index into nix-ld
+    libraries = [
+      (pkgs.runCommand "steamrun-lib" {} "mkdir $out; ln -s ${pkgs.steam-run.fhsenv}/usr/lib64 $out/lib")
+    ];
+  };
 
+  services.envfs.enable = true; # initiates a virtual fileystsem of standard linux distribution
 
   #-------------- Mandatory stuff for noctalia----------------------
   security.polkit.enable = true;
@@ -160,12 +159,12 @@
   nixpkgs.config.permittedInsecurePackages = []; # empty
 
   # enable the synaptics driver for fingerprint
-  services.fprintd.enable = true;
   # services.open-fprintd.enable = true;
-  # services.python-validity.enable = true;
+  # services.custom-validity.enable = true;
+
   # allow fingerprint authentication
-  security.pam.services.sudo.fprintAuth = true;
-  security.pam.services.login.fprintAuth = true;
+  # security.pam.services.sudo.fprintAuth = true;
+  # security.pam.services.login.fprintAuth = true;
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
@@ -207,11 +206,17 @@
     playerctl
     uv
     zathura
+    pkgs.kdePackages.okular
+    onlyoffice-desktopeditors
   ];
   
   # Enabling native direnv integration
-  programs.direnv.enable = true;
-
+  
+  programs.direnv = {
+  	enable = true;
+  	nix-direnv.enable = true; # caching environments for faster reload times
+  }; 
+  
   # enable fonts
   fonts.packages = with pkgs; [
   	nerd-fonts.jetbrains-mono

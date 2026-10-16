@@ -11,13 +11,8 @@
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
 
-		nixos-fprint = {
-      			url = "github:ahbnr/nixos-06cb-009a-fingerprint-sensor";
-      			inputs.nixpkgs.follows = "nixpkgs";
-    		};
-
 	};
-	outputs =  { self, nixpkgs, noctalia, home-manager, nixos-fprint, ... }@inputs: {
+	outputs =  { self, nixpkgs, noctalia, home-manager, ... }@inputs: {
 		nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
 			system = "x86_64-linux";
 			specialArgs = { inherit inputs; };
@@ -25,8 +20,6 @@
 				./hardware-configuration.nix
 				./configuration.nix
 				inputs.noctalia.nixosModules.default
-				nixos-fprint.nixosModules.open-fprintd
-        	    nixos-fprint.nixosModules.python-validity
 				home-manager.nixosModules.home-manager
 				{
 					home-manager.useGlobalPkgs = true;

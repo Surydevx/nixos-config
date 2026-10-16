@@ -208,6 +208,7 @@
     zathura
     pkgs.kdePackages.okular
     onlyoffice-desktopeditors
+    keepass
   ];
   
   # Enabling native direnv integration
